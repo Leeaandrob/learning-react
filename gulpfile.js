@@ -11,6 +11,7 @@ gulp.task('serve', [], function() {
   });
 
   gulp.watch('./public/*.html', ["html"]);
+  gulp.watch('./public/scripts/*.js', ["scripts"]);
 });
 
 
@@ -20,4 +21,11 @@ gulp.task('html', function() {
     .pipe(browserSync.stream());
 });
 
-gulp.task('default', ['serve', 'html']);
+gulp.task('scripts', function() {
+  return gulp.src('./public/scripts/*.js')
+    .pipe(gulp.dest('./dist/js'))
+    .pipe(browserSync.stream());
+});
+
+
+gulp.task('default', ['serve', 'html', 'scripts']);
