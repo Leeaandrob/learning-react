@@ -1,16 +1,14 @@
 (function () {
 	'use strict';
 
-	var data_bk = [
-		{id: 1, author: "Pete Hunt", text: "This is one comment"},
-		{id: 2, author: "Jordan Walke", text: "This is *another* comment"}
-	];
+	var data_bkp = [
+		{"id": "1", "author": "Pete Hunt", "text": "This is one comment"},
+		{"id": "2", "author": "Jordan Walke", "text": "This is *another* comment"}
+
+	]
 
 	var CommentBox = React.createClass({
-		getInitialState: function() {
-			return {data: []};
-		},
-		componentDidMount: function() {
+		loadCommentsFromServer: function() {
 			$.ajax({
 				url: this.props.url,
 				dataType: 'json',
@@ -19,10 +17,17 @@
 					this.setState({data: data});
 				}.bind(this),
 				error: function(xhr, status, err) {
+					this.setState({data: data_bkp});
 					console.error(this.props.url, status, err.toString());
-					this.setState({data: data_bk});
 				}.bind(this)
 			});
+		},
+		getInitialState: function() {
+			return {data: []};
+		},
+		componentDidMount: function() {
+			this.loadCommentsFromServer();
+			setInterval(this.loadCommentsFromServer, this.props.pollInterval);
 		},
 		render: function() {
 			return (
@@ -81,7 +86,7 @@
 	});
 
     ReactDOM.render(
-		<CommentBox url="/api/comments" />,
+		<CommentBox url="http://localhost:8000/api/comments/" pollInterval={20000}/>,
         document.getElementById('content')
     );
 
